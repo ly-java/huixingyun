@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="useraccount" jdbcType="VARCHAR" property="useraccount"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="userid" jdbcType="VARCHAR" property="userid"/>
+        <result column="usersex" jdbcType="CHAR" property="usersex"/>
+        <result column="entrytime" jdbcType="TIMESTAMP" property="entrytime"/>
+        <result column="userphone" jdbcType="VARCHAR" property="userphone"/>
+        <result column="useraddress" jdbcType="VARCHAR" property="useraddress"/>
+        <result column="roleid" jdbcType="BIGINT" property="roleid"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="endtime" jdbcType="TIMESTAMP" property="endtime"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+        <association property="roles" javaType="com.jbtx.entity.Roles">
+            <id column="id" jdbcType="BIGINT" property="id"/>
+            <result column="rolename" jdbcType="VARCHAR" property="rolename"/>
+        </association>
+        <association property="classRoom" javaType="com.jbtx.entity.ClassRoom">
+            <id column="id" jdbcType="BIGINT" property="id"/>
+            <result column="classname" jdbcType="VARCHAR" property="classname"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, useraccount, username, userid, usersex, entrytime, userphone, useraddress, roleid, 
+    createtime, createid, updatetime, updateid, endtime, isdelete,password, beizhuone, beizhutwo
+  </sql>
+    <select id="seleteAll" resultMap="BaseResultMap">
+        select
+        user.id, useraccount, username, userid, usersex, entrytime, userphone, useraddress, roleid,
+        user.createtime, user.createid,roles.id,roles.rolename,classname
+        from user
+        inner join roles on user.roleid=roles.id
+        left join classroom on user.id=classroom.teacherid
+        where user.isdelete=1
+        <if test="username!=null">
+            and username like CONCAT('%',#{username},'%')
+        </if>
+        <if test="roleid!=null">
+            and roleid=#{roleid}
+        </if>
+        <if test="type!=null">
+            and roleid=2
+        </if>
+        order by user.createtime desc
+    </select>
+    <select id="selectById" resultType="int">
+        SELECT COUNT(1)
+        FROM USER
+        INNER JOIN classroom ON user.id=classroom.teacherid
+        WHERE user.id=#{id} AND classroom.isdelete=1
+    </select>
+</mapper>

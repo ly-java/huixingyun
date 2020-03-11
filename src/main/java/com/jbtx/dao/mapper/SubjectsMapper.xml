@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.SubjectsMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.Subjects">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="subjectname" jdbcType="VARCHAR" property="subjectname"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, subjectname, createtime, createid, updatetime, updateid, isdelete, beizhuone, 
+    beizhutwo
+  </sql>
+    <select id="countById" resultType="int">
+        SELECT COUNT(1) FROM subjects
+        LEFT JOIN classroom ON subjects.id=classroom.subjectid
+        WHERE subjectid=#{id} AND classroom.isdelete=1
+    </select>
+</mapper>

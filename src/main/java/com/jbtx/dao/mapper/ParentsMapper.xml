@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.ParentsMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.Parents">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="parentsname" jdbcType="VARCHAR" property="parentsname"/>
+        <result column="parentssex" jdbcType="CHAR" property="parentssex"/>
+        <result column="relation" jdbcType="VARCHAR" property="relation"/>
+        <result column="parentsaddress" jdbcType="VARCHAR" property="parentsaddress"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="parentsphone" jdbcType="VARCHAR" property="parentsphone"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+        <result column="studentname" jdbcType="VARCHAR" property="studentname"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, account, parentsname, parentssex, relation, parentsaddress, createtime, createid, 
+    updatetime, updateid, parentsphone, isdelete,password, beizhuone, beizhutwo
+  </sql>
+    <select id="selectAllParents" resultMap="BaseResultMap">
+        select
+        parents.id, account, parentsname, parentssex, relation, parentsaddress, parents.createtime, parents.createid,
+        parents.updatetime, parents.updateid, parentsphone, parents.isdelete,studentsname
+        from parents left join students on parents.id =students.parentsid
+        where parents.isdelete=1
+        <if test="studentsname!=null and studentsname!=''">
+            and studentsname like CONCAT('%',#{studentsname},'%')
+        </if>
+        GROUP BY parents.id
+        ORDER BY parents.`createtime` DESC
+    </select>
+    <select id="countById" resultType="int">
+        SELECT COUNT(1) FROM parents
+        LEFT JOIN students ON parents.id=students.parentsid
+        WHERE parents.id=#{id} AND students.isstudy=1
+    </select>
+</mapper>

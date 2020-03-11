@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.StudentsMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.Students">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="studentsname" jdbcType="VARCHAR" property="studentsname"/>
+        <result column="studentssex" jdbcType="CHAR" property="studentssex"/>
+        <result column="borntime" jdbcType="TIMESTAMP" property="borntime"/>
+        <result column="school" jdbcType="VARCHAR" property="school"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="parentsid" jdbcType="BIGINT" property="parentsid"/>
+        <result column="classid" jdbcType="BIGINT" property="classid"/>
+        <result column="isstudy" jdbcType="CHAR" property="isstudy"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+        <result column="classname" jdbcType="VARCHAR" property="classname"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, studentsname, studentssex, borntime, school, createtime, createid, updatetime, 
+    updateid, parentsid, classid, isstudy, isdelete, beizhuone, beizhutwo
+  </sql>
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        students.id, studentsname, studentssex, borntime, school, students.createtime, students.createid, students.updatetime,
+        students.updateid, parentsid, classid, isstudy, students.isdelete,classroom.subjectid 'beizhutwo',classname
+        from students
+        left join classroom on students.classid=classroom.id
+        where students.id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="getChildren" resultMap="BaseResultMap">
+        select
+        students.id, studentsname, studentssex, borntime, school, students.createtime, students.createid,
+        students.updatetime,
+        students.updateid, parentsid, classid, isstudy, students.isdelete,classname
+        from students
+        inner join parents on students.parentsid=parents.id
+        INNER JOIN classroom ON students.classid=classroom.id
+        where parentsid=#{parentsid}
+    </select>
+    <select id="getStudents" resultMap="BaseResultMap">
+        SELECT
+        students.id, studentsname, studentssex, borntime, school, students.createtime, students.createid,
+        students.updatetime,
+        students.updateid, parentsid, classid, isstudy, students.isdelete,username,classname
+        FROM students
+        INNER JOIN classroom ON students.classid=classroom.id
+        INNER JOIN USER ON user.id =classroom.teacherid
+        WHERE roleid=2
+        <if test="teacherid!=null and teacherid!=''">
+            and teacherid=#{teacherid}
+        </if>
+        <if test="studentsname!=null and studentsname!='' ">
+            and studentsname like CONCAT('%',#{studentsname},'%')
+        </if>
+        <if test="classid!=null and classid!='' ">
+            and classid =#{classid}
+        </if>
+        order by students.createtime desc
+    </select>
+</mapper>

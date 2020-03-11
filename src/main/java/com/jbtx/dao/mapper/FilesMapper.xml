@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.FilesMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.Files">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="filename" jdbcType="VARCHAR" property="filename"/>
+        <result column="studentid" jdbcType="BIGINT" property="studentid"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="sucaiid" jdbcType="BIGINT" property="sucaiid"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+        <association property="sucai" javaType="com.jbtx.entity.Sucai">
+            <id column="id" jdbcType="BIGINT" property="id"/>
+            <result column="sucainame" jdbcType="VARCHAR" property="sucainame"/>
+            <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+            <result column="createid" jdbcType="BIGINT" property="createid"/>
+            <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+            <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+            <result column="address" jdbcType="VARCHAR" property="address"/>
+            <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+            <result column="type" jdbcType="CHAR" property="type"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, filename, studentid, createtime, createid, updatetime, updateid, sucaiid, isdelete, 
+    beizhuone, beizhutwo
+  </sql>
+    <select id="selectAllFiles" resultType="com.jbtx.entity.Files">
+        select
+        <include refid="Base_Column_List"/>
+        from files
+        where isdelete=1
+        <if test="filename!=null and filename!=''">
+            and filename like CONCAT('%',#{filename},'%')
+        </if>
+    </select>
+</mapper>

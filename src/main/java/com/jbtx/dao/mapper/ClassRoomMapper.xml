@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.ClassRoomMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.ClassRoom">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="classname" jdbcType="VARCHAR" property="classname"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="teacherid" jdbcType="BIGINT" property="teacherid"/>
+        <result column="subjectid" jdbcType="BIGINT" property="subjectid"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="classtime" jdbcType="VARCHAR" property="classtime"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+        <association property="user" javaType="com.jbtx.entity.User">
+            <id column="id" jdbcType="BIGINT" property="id"/>
+            <result column="username" jdbcType="VARCHAR" property="username"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, classname, createtime, createid, updatetime, updateid, teacherid, subjectid, 
+    isdelete,classtime, beizhuone, beizhutwo
+    </sql>
+    <sql id="classAndUser">
+        classroom.id, classname, classroom.createtime, classroom.createid, classroom.updatetime, classroom.updateid, teacherid, subjectid,
+        classroom.isdelete, classroom.classtime,user.id,user.username
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <include refid="classAndUser"/>
+        from classroom
+        left join user on classroom.teacherid=user.id
+        where id = #{id,jdbcType=BIGINT} and classroom.isdelete=1
+        order by classroom.createtime desc
+    </select>
+    <select id="selectAllClassRoom" resultMap="BaseResultMap">
+        select
+        <include refid="classAndUser"/>
+        from classroom
+        left join user on classroom.teacherid=user.id
+        where classroom.isdelete=1
+        <if test="username!=null and username!=''">
+            and user.username like CONCAT('%',#{username},'%')
+        </if>
+        <if test="subjectid!=null and subjectid!=''">
+            and subjectid=#{subjectid}
+        </if>
+        order by classroom.createtime desc
+    </select>
+    <select id="countById" resultType="int">
+        select COUNT(1) from classroom
+        left join students on classroom.id=students.classid
+        where classroom.id=#{id} and students.isstudy=1
+    </select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbtx.dao.RolesMapper">
+    <resultMap id="BaseResultMap" type="com.jbtx.entity.Roles">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="rolename" jdbcType="VARCHAR" property="rolename"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="createid" jdbcType="BIGINT" property="createid"/>
+        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
+        <result column="updateid" jdbcType="BIGINT" property="updateid"/>
+        <result column="isdelete" jdbcType="CHAR" property="isdelete"/>
+        <result column="beizhuone" jdbcType="VARCHAR" property="beizhuone"/>
+        <result column="beizhutwo" jdbcType="VARCHAR" property="beizhutwo"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, rolename, createtime, createid, updatetime, updateid, isdelete, beizhuone, beizhutwo
+  </sql>
+    <select id="getRoles" resultType="com.jbtx.entity.Roles">
+        select
+        <include refid="Base_Column_List"/>
+        from roles where isdelete=1
+        <if test="rolename!=null and rolename!=''">
+            and rolename like CONCAT('%',#{rolename},'%')
+        </if>
+        order by createtime desc
+    </select>
+    <select id="selectById" resultType="int">
+        SELECT COUNT(1) FROM roles
+        LEFT JOIN USER ON roles.id=user.roleid
+        WHERE roles.id=#{id} AND user.isdelete=1
+    </select>
+</mapper>
